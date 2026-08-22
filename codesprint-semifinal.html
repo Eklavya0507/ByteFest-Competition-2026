@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>SEMIFINAL | Code Sprint | BYTEFEST 2026</title>
+<link rel="stylesheet" href="codesprint.css?v=1.0.0">
+<script src="config.js?v=2.3.0" defer></script><script src="codesprint-app.js?v=1.0.0" defer></script>
+</head>
+<body data-round="semifinal">
+<div class="cs-shell">
+<header class="cs-topbar">
+<div class="cs-brand"><span class="cs-mark">CS</span><div><strong>BYTEFEST 2026 · CODE SPRINT</strong><small id="roundLabel">SEMIFINAL</small></div></div>
+<div class="cs-score"><span>POINTS</span><strong id="scoreValue">0</strong></div>
+</header>
+<div class="cs-meta"><span class="cs-pill" id="teamLabel">CS----</span><span class="cs-pill live">LIVE</span><span class="cs-pill" id="opponentPill" hidden></span><span class="cs-pill" id="clockPill" hidden></span><span class="cs-pill" id="violationPill">SECURITY 0/4</span></div>
+<div class="cs-stages" id="stageProgress"></div>
+<div class="cs-layout">
+<section class="cs-card cs-main">
+<div class="cs-kicker">CURRENT CHALLENGE</div><h1 class="cs-title" id="stageTitle">Loading...</h1><p class="cs-subtitle">Completed stages are locked and cannot be reopened.</p>
+<div class="cs-question"><h2>Question</h2><p id="questionPrompt">Enter secure mode to load the challenge.</p></div>
+<form class="cs-answer" id="answerForm"><input class="cs-input" id="answerInput" autocomplete="off" spellcheck="false" required placeholder="Enter answer"><div class="cs-actions"><button class="cs-btn primary" id="submitAnswerButton" type="submit">SUBMIT ANSWER</button></div><div class="cs-status" id="answerStatus" role="status"></div></form>
+</section>
+<aside class="cs-card cs-side cs-hints"><h3>Hints</h3><p>Hints unlock in order. Reopening an already-used hint does not deduct points again.</p><div id="hintList"></div></aside>
+</div>
+</div>
+<div class="cs-secure-gate" id="secureGate"><section class="cs-card cs-secure-box"><div class="cs-kicker">SECURE COMPETITION MODE</div><h2 id="secureTitle">Ready to Start?</h2><p id="secureText">The participant competition runs in fullscreen. Leaving fullscreen, switching tabs, minimizing, or losing the competition window can trigger a security lock.</p><button class="cs-btn primary" id="enterSecureButton" type="button">ENTER FULLSCREEN & START</button><div class="cs-status bad" id="secureStatus"></div></section></div>
+<div class="cs-lock" id="securityLock"><section class="cs-lock-box"><div class="cs-lock-icon">⚠</div><div class="cs-kicker">SECURITY VIOLATION</div><h2>Competition Locked</h2><p>Attempt <strong id="lockCount">0/4</strong></p><p id="lockReason"></p><p id="lockDecisionText"></p><form id="unlockForm"><input id="unlockPassword" type="password" autocomplete="off" placeholder="Coordinator password" required><div class="cs-lock-actions"><button class="cs-btn good" type="submit">COORDINATOR UNLOCK</button><button class="cs-btn danger" id="disqualifyButton" type="button" hidden>DISQUALIFY TEAM</button></div><div class="cs-status" id="unlockStatus"></div></form></section></div>
+</body></html>
