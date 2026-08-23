@@ -1,27 +1,11 @@
-# BYTEFEST Competition 2026 Frontend
+# BYTEFEST 2026 Competition Frontend v2
 
-This is a NEW repository. Do not copy it over the registration website.
+- One participant login for Code Sprint + Bug Hunt
+- Login fields: Event + Registration ID + Password
+- Participant page has no Back button
+- Coordinator/Admin login has Back to portal
+- Competition Admin does not create teams; approved registration data is read from the registration database
+- Invictus Tech Club logo is used in a 3D/sphere-style orb on portal and login pages
+- Bug Hunt: 35m R1 (3 stages) -> 40m R2 (2) -> 50m R3 (2) -> 20m Surprise -> auto Top 3 -> 15m Final
 
-## One frontend repo for all competition events
-Use this same repository for:
-- Code Sprint
-- Bug Hunt (add later)
-- Checkmate (add later)
-
-Code Sprint is included now.
-
-## After Render backend is deployed
-Edit only `config.js` and replace:
-
-`https://YOUR-COMPETITION-BACKEND.onrender.com`
-
-with your new Render competition backend URL.
-
-Then enable GitHub Pages for this repository.
-
-## Pages
-- `index.html` competition home
-- `codesprint-login.html` participant login
-- `admin-login.html` coordinator/admin login
-- `codesprint-admin.html` team creation and live control
-- `codesprint-projector.html` leaderboard/projector
+`config.js` is already set to https://bytefest-competition-backend.onrender.com

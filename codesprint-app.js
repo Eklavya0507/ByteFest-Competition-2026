@@ -33,7 +33,7 @@
     };
 
     if (!token) {
-        location.replace("codesprint-login.html");
+        location.replace("participant-login.html");
         return;
     }
 
@@ -49,7 +49,7 @@
         try { data = text ? JSON.parse(text) : {}; } catch {}
         if (response.status === 401) {
             sessionStorage.removeItem("bytefest_codesprint_token");
-            location.replace("codesprint-login.html");
+            location.replace("participant-login.html");
             throw new Error("Session expired");
         }
         if (!response.ok) {
