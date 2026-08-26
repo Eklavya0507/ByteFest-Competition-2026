@@ -13,9 +13,7 @@
   const matchRows = document.getElementById("checkmateMatchRows");
   const status = document.getElementById("adminStatus");
   const phase = document.getElementById("eventPhase");
-  const startButton = document.getElementById("startEventButton");
-  const stopButton = document.getElementById("stopEventButton");
-  const resumeButton = document.getElementById("resumeEventButton");
+  const eventControlButton = document.getElementById("eventControlButton");
   const standardSection = document.getElementById("standardAdminSection");
   const checkmateSection = document.getElementById("checkmateAdminSection");
   const createMatchForm = document.getElementById("createMatchForm");
@@ -68,13 +66,11 @@
       phase.textContent = phaseLabel(control.status || "not_started");
 
       const upper = eventName.toUpperCase();
-      startButton.textContent = `START ${upper}`;
-      stopButton.textContent = `STOP ${upper}`;
-      resumeButton.textContent = `RESUME ${upper}`;
-
-      startButton.hidden = control.status !== "not_started";
-      stopButton.hidden = control.status !== "running";
-      resumeButton.hidden = control.status !== "paused";
+      const running = control.status === "running";
+      eventControlButton.dataset.action = running ? "stop" : (control.status === "paused" ? "resume" : "start");
+      eventControlButton.textContent = running ? `STOP ${upper}` : `START ${upper}`;
+      eventControlButton.classList.toggle("danger", running);
+      eventControlButton.classList.toggle("good", !running);
     } catch (error) {
       phase.textContent = error.message;
     }
@@ -99,12 +95,14 @@
         <td>${team.disqualified
           ? '<span class="pill bad">DISQUALIFIED</span>'
           : team.locked
-            ? `<span class="pill bad">LOCKED ${team.violations}/4</span>`
-            : `${team.violations}/4`
+            ? `<span class="pill bad">LOCKED · ${team.violations}/4</span>`
+            : `<span class="pill live">UNLOCKED · ${team.violations}/4</span>`
         }</td>
         <td>
           <div class="admin-actions">
-            <button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>
+            ${team.locked
+              ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
+              : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
             <button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>
           </div>
         </td>
@@ -234,25 +232,12 @@
     }
   });
 
-  startButton.addEventListener("click", async () => {
-    if (!confirm(`Start ${eventName} now?`)) return;
+  eventControlButton.addEventListener("click", async () => {
+    const action = eventControlButton.dataset.action || "start";
+    const verb = action === "stop" ? "STOP" : "START";
+    if (!confirm(`${verb} ${eventName} now?`)) return;
     try {
-      await req(`/api/competition/admin/control/${eventSlug(eventName)}/start`, { method: "POST" });
-      load();
-    } catch (error) { alert(error.message); }
-  });
-
-  stopButton.addEventListener("click", async () => {
-    if (!confirm(`STOP ${eventName}? Active play will be paused.`)) return;
-    try {
-      await req(`/api/competition/admin/control/${eventSlug(eventName)}/stop`, { method: "POST" });
-      load();
-    } catch (error) { alert(error.message); }
-  });
-
-  resumeButton.addEventListener("click", async () => {
-    try {
-      await req(`/api/competition/admin/control/${eventSlug(eventName)}/resume`, { method: "POST" });
+      await req(`/api/competition/admin/control/${eventSlug(eventName)}/${action}`, { method: "POST" });
       load();
     } catch (error) { alert(error.message); }
   });

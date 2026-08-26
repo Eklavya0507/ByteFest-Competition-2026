@@ -194,3 +194,23 @@
   .cm-create-grid { grid-template-columns: 1fr; }
   .cm-stats { grid-template-columns: 1fr; }
 }
+
+
+.cm-second-login{margin-top:18px;padding:16px;border:1px solid var(--cm-border);border-radius:16px;background:rgba(69,231,255,.035)}
+.cm-shared-layout{display:grid;grid-template-columns:minmax(220px,.55fr) minmax(480px,1.25fr) minmax(220px,.55fr);gap:18px;align-items:center;margin-top:18px}
+.cm-compact-player{padding:20px;text-align:center}
+.cm-compact-player .cm-clock{font-size:clamp(42px,6vw,78px);margin:15px 0}
+.cm-stat-line{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;color:rgba(255,255,255,.72);font-size:13px}
+.cm-stat-line span{padding:8px 10px;border:1px solid var(--cm-border);border-radius:10px}
+.cm-board-wrap{width:min(76vh,720px);max-width:100%;margin:auto}
+.cm-turn-strip{text-align:center;padding:10px 12px;border:1px solid var(--cm-border);border-radius:12px 12px 0 0;font-weight:900;letter-spacing:.08em;background:rgba(255,255,255,.05)}
+.cm-board{display:grid;grid-template-columns:repeat(8,1fr);aspect-ratio:1/1;width:100%;border:3px solid rgba(255,255,255,.2);box-shadow:0 22px 70px rgba(0,0,0,.36);user-select:none}
+.cm-square{display:grid;place-items:center;position:relative;font-size:clamp(30px,5.1vw,64px);line-height:1;cursor:pointer;font-family:"Segoe UI Symbol","Noto Sans Symbols 2",serif}
+.cm-square.light{background:#e8edf2;color:#111827}.cm-square.dark{background:#7289a3;color:#0b1020}
+.cm-square.selected{box-shadow:inset 0 0 0 5px #45e7ff}.cm-square.legal::after{content:"";width:22%;aspect-ratio:1;border-radius:50%;background:rgba(5,8,20,.42);position:absolute}
+.cm-square.capture::after{width:78%;height:78%;border:5px solid rgba(251,113,133,.72);background:transparent}
+.cm-square.last{box-shadow:inset 0 0 0 4px rgba(251,191,36,.68)}
+.cm-board-footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--cm-border);border-top:0;border-radius:0 0 12px 12px;font-size:12px;font-weight:800}
+.cm-shared-controls{padding:16px 18px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+@media(max-width:1150px){.cm-shared-layout{grid-template-columns:1fr}.cm-board-wrap{order:1}.cm-compact-player{order:2}.cm-board-wrap{width:min(80vh,680px)}}
+@media(max-width:620px){.cm-board-wrap{width:100%}.cm-square{font-size:clamp(27px,10vw,48px)}.cm-actions{width:100%}.cm-actions .btn{flex:1}}
