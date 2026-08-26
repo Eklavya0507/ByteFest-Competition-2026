@@ -6,10 +6,10 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Checkmate Match | BYTEFEST 2026</title>
   <link rel="stylesheet" href="competition.css?v=3.1.0">
-  <link rel="stylesheet" href="checkmate.css?v=2.0.0">
+  <link rel="stylesheet" href="checkmate.css?v=3.1.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js" defer></script>
   <script src="config.js?v=2.0.0" defer></script>
-  <script src="checkmate-match.js?v=2.0.0" defer></script>
+  <script src="checkmate-match.js?v=3.1.0" defer></script>
 </head>
 <body>
 <div class="secure-gate active" id="checkmateSecureGate">
@@ -19,6 +19,22 @@
     <p class="lead">Both opponents play on this one computer. Enter fullscreen before the chess board is enabled.</p>
     <button class="btn primary" id="enterCheckmateFullscreen">ENTER FULLSCREEN</button>
     <div class="status" id="fullscreenStatus"></div>
+  </section>
+</div>
+
+
+<div class="secure-gate cm-security-gate" id="checkmateSecurityLock">
+  <section class="card secure-box">
+    <div class="kicker">CHECKMATE · SECURITY</div>
+    <h1>STATION LOCKED</h1>
+    <p class="lead">Fullscreen/security violation detected. Call the coordinator to continue this match.</p>
+    <p>Attempt <strong id="checkmateLockCount">0/4</strong></p>
+    <p id="checkmateLockReason"></p>
+    <form id="checkmateUnlockForm">
+      <input class="input" id="checkmateUnlockPassword" type="password" autocomplete="off" placeholder="Coordinator password" required>
+      <button class="btn primary" type="submit">COORDINATOR UNLOCK</button>
+      <div class="status" id="checkmateUnlockStatus"></div>
+    </form>
   </section>
 </div>
 

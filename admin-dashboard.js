@@ -139,7 +139,13 @@
 
       if (match.status === "waiting") actions.push(`<button class="btn good cm-match-action" data-action="start" data-id="${match.id}">START</button>`);
       if (match.status === "running") actions.push(`<button class="btn danger cm-match-action" data-action="stop" data-id="${match.id}">STOP</button>`);
-      if (match.status === "paused") actions.push(`<button class="btn good cm-match-action" data-action="resume" data-id="${match.id}">RESUME</button>`);
+      if (match.status === "paused" && !match.security?.locked) actions.push(`<button class="btn good cm-match-action" data-action="resume" data-id="${match.id}">RESUME</button>`);
+
+      if (match.status !== "completed") {
+        actions.push(match.security?.locked
+          ? `<button class="btn good cm-match-action" data-action="security-unlock" data-id="${match.id}">UNLOCK</button>`
+          : `<button class="btn cm-match-action" data-action="security-lock" data-id="${match.id}">LOCK</button>`);
+      }
 
       if (match.status !== "completed") {
         actions.push(`<button class="btn cm-match-action" data-action="white_win" data-id="${match.id}">WHITE WIN</button>`);
@@ -153,7 +159,8 @@
           <td>${phaseLabel(match.phase)}</td>
           <td>${esc(match.whiteName)}<br><small>${esc(match.whiteRegistrationId)}</small></td>
           <td>${esc(match.blackName)}<br><small>${esc(match.blackRegistrationId)}</small></td>
-          <td>${phaseLabel(match.status)}${match.activeColor ? `<br><small>TURN: ${match.activeColor.toUpperCase()}</small>` : ""}</td>
+          <td>${phaseLabel(match.status)}${match.activeColor ? `<br><small>TURN: ${match.activeColor.toUpperCase()}</small>` : ""}
+          <br><small>SECURITY: ${match.security?.locked ? `LOCKED ${match.security.violations}/4` : `UNLOCKED ${match.security?.violations || 0}/4`}</small></td>
           <td>8+3<br>W ${formatClock(match.whiteTimeMs)}<br>B ${formatClock(match.blackTimeMs)}</td>
           <td>W ${match.whiteMaterial} · B ${match.blackMaterial}</td>
           <td>W +${whiteCapture} · B +${blackCapture}</td>
@@ -276,6 +283,12 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ result: action, reason })
+        });
+      } else if (action === "security-lock" || action === "security-unlock") {
+        await req(`/api/competition/admin/checkmate/match/${id}/security`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: action === "security-lock" ? "lock" : "unlock" })
         });
       } else {
         await req(`/api/competition/admin/checkmate/match/${id}/${action}`, { method: "POST" });

@@ -214,3 +214,106 @@
 .cm-shared-controls{padding:16px 18px;margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
 @media(max-width:1150px){.cm-shared-layout{grid-template-columns:1fr}.cm-board-wrap{order:1}.cm-compact-player{order:2}.cm-board-wrap{width:min(80vh,680px)}}
 @media(max-width:620px){.cm-board-wrap{width:100%}.cm-square{font-size:clamp(27px,10vw,48px)}.cm-actions{width:100%}.cm-actions .btn{flex:1}}
+
+
+/* =========================================================
+   CHECKMATE v5 — 1080p balanced shared-station layout
+   ========================================================= */
+.cm-shell{
+  max-width:1600px;
+  padding:14px 22px 18px;
+}
+
+.cm-topbar{
+  gap:10px;
+}
+
+.cm-shared-layout{
+  grid-template-columns:minmax(245px,.58fr) minmax(500px,1.35fr) minmax(245px,.58fr);
+  gap:16px;
+  margin-top:10px;
+}
+
+.cm-compact-player{
+  padding:16px 14px;
+  border-radius:18px;
+}
+
+.cm-compact-player h2{
+  font-size:clamp(22px,2.1vw,34px);
+}
+
+.cm-compact-player .cm-clock{
+  font-size:clamp(44px,4.2vw,64px);
+  margin:10px 0 12px;
+}
+
+.cm-stat-line{
+  gap:6px;
+  font-size:12px;
+}
+
+.cm-stat-line span{
+  padding:6px 8px;
+}
+
+.cm-board-wrap{
+  width:min(68vh,660px);
+}
+
+.cm-turn-strip{
+  padding:8px 10px;
+  font-size:13px;
+}
+
+.cm-square{
+  font-size:clamp(30px,4.25vw,58px);
+}
+
+.cm-board-footer{
+  padding:7px 10px;
+  font-size:11px;
+}
+
+.cm-shared-controls{
+  margin-top:10px;
+  padding:10px 14px;
+  gap:10px;
+}
+
+.cm-shared-controls .cm-muted{
+  margin:4px 0 0;
+  font-size:12px;
+}
+
+.cm-shared-controls .btn{
+  min-height:38px;
+  padding:8px 12px;
+  font-size:12px;
+}
+
+@media (min-width:1500px) and (min-height:850px){
+  .cm-shared-layout{
+    grid-template-columns:minmax(270px,.6fr) minmax(540px,1.32fr) minmax(270px,.6fr);
+  }
+  .cm-board-wrap{width:min(70vh,680px)}
+}
+
+@media (max-width:1150px){
+  .cm-shared-layout{grid-template-columns:1fr}
+  .cm-board-wrap{order:1;width:min(64vh,620px)}
+  .cm-compact-player{order:2;max-width:620px;width:100%;margin:auto}
+}
+
+@media (max-width:620px){
+  .cm-shell{padding:10px}
+  .cm-board-wrap{width:100%}
+  .cm-compact-player .cm-clock{font-size:48px}
+}
+
+
+/* Checkmate coordinator security lock */
+.cm-security-gate{z-index:10050}
+.cm-security-gate .secure-box{max-width:560px}
+.cm-security-gate form{display:grid;gap:12px;margin-top:16px}
+.cm-security-gate .input{width:100%;min-height:46px}
