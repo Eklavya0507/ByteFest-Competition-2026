@@ -8,7 +8,7 @@
   addEventListener("popstate", () => history.go(1));
 
   const START_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-  const pieceGlyph = { wp:"♙", wn:"♘", wb:"♗", wr:"♖", wq:"♕", wk:"♔", bp:"♟", bn:"♞", bb:"♝", br:"♜", bq:"♛", bk:"♚" };
+  const pieceGlyph = { p:"♟", n:"♞", b:"♝", r:"♜", q:"♛", k:"♚" };
   const capturedName = { p:"pawn", n:"knight", b:"bishop", r:"rook", q:"queen" };
   const pieceValue = { pawn:1, knight:3, bishop:3, rook:5, queen:9 };
 
@@ -134,7 +134,7 @@
           lm?(lm.captured?"capture":"legal"):"",
           lastMove&&(lastMove.from===sq||lastMove.to===sq)?"last":""
         ].filter(Boolean).join(" ");
-        html+=`<button type="button" class="${cls}" data-square="${sq}" aria-label="${sq}">${piece?pieceGlyph[piece.color+piece.type]:""}</button>`;
+        html+=`<button type="button" class="${cls}" data-square="${sq}" aria-label="${sq}">${piece?`<span class="cm-piece ${piece.color==="w"?"white":"black"}">${pieceGlyph[piece.type]}</span>`:""}</button>`;
       }
     }
     board.innerHTML=html;
