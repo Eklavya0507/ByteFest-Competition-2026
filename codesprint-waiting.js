@@ -1,10 +1,10 @@
 (function(){
 const API=window.BYTEFEST_CONFIG.API_URL, token=sessionStorage.getItem("bytefest_codesprint_token");
 const PAGE={round1:"codesprint-round1.html",round2:"codesprint-round2.html",qualifier:"codesprint-qualifier.html",semifinal:"codesprint-semifinal.html",wildcard:"codesprint-wildcard.html",entry_final:"codesprint-entry-final.html",wildcard_final:"codesprint-wildcard-final.html",final:"codesprint-final.html"};
-if(!token){location.replace("participant-login.html");return;}
+if(!token){location.replace("codesprint-login.html");return;}
 async function load(){
  const r=await fetch(`${API}/api/codesprint/state`,{headers:{Authorization:`Bearer ${token}`}}); const d=await r.json();
- if(r.status===401){sessionStorage.removeItem("bytefest_codesprint_token");location.replace("participant-login.html");return;}
+ if(r.status===401){sessionStorage.removeItem("bytefest_codesprint_token");location.replace("codesprint-login.html");return;}
  if(PAGE[d.currentRound]){location.replace(PAGE[d.currentRound]);return;}
  document.getElementById("waitTeam").textContent=d.teamId; document.getElementById("waitScore").textContent=d.totalScore;
  const rank=document.getElementById("waitRank"); if(d.rank){rank.hidden=false;rank.textContent=`RANK #${d.rank}`;}

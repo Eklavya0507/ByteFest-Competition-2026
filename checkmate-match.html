@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Checkmate Match | BYTEFEST 2026</title>
+  <link rel="stylesheet" href="competition.css?v=3.0.0">
+  <link rel="stylesheet" href="checkmate.css?v=1.0.0">
+  <script src="config.js?v=2.0.0" defer></script>
+  <script src="checkmate-match.js?v=1.0.0" defer></script>
+</head>
+<body>
+<main class="cm-shell">
+  <header class="cm-topbar">
+    <div class="portal-brand">
+      <div class="mini-orb"><img src="assets/invictus-logo.png" alt="Invictus Tech Club"></div>
+      <div><strong>CHECKMATE</strong><small>BYTEFEST 2026 · LIVE MATCH</small></div>
+    </div>
+    <div class="admin-actions">
+      <span class="pill" id="phasePill">LOADING</span>
+      <span class="pill" id="boardPill">BOARD -</span>
+      <span class="pill" id="matchStatusPill">WAITING</span><span class="pill">TIME CONTROL 8+3</span>
+    </div>
+  </header>
+
+  <section class="cm-piece-values" aria-label="Piece point values">
+    <div class="cm-piece-value">♙ Pawn<b>1</b></div>
+    <div class="cm-piece-value">♘ Knight<b>3</b></div>
+    <div class="cm-piece-value">♗ Bishop<b>3</b></div>
+    <div class="cm-piece-value">♖ Rook<b>5</b></div>
+    <div class="cm-piece-value">♕ Queen<b>9</b></div>
+    <div class="cm-piece-value">♔ King<b>∞</b></div>
+  </section>
+
+  <section class="cm-player-grid">
+    <article class="cm-player" id="whiteCard">
+      <div class="kicker">WHITE</div>
+      <h2 id="whiteName">—</h2>
+      <div class="cm-clock" id="whiteClock">08:00</div>
+      <div class="cm-stats">
+        <div class="cm-stat"><small>Material</small><b id="whiteMaterial">39</b></div>
+        <div class="cm-stat"><small>Tournament pts</small><b id="whiteTournament">0.0</b></div>
+        <div class="cm-stat"><small>Moves</small><b id="whiteMoves">0</b></div>
+      </div>
+    </article>
+
+    <aside class="cm-center">
+      <div class="kicker">FULL MOVE</div>
+      <div class="cm-move-number" id="fullMove">0 / 50</div>
+      <div class="cm-turn" id="turnLabel">WAITING TO START</div>
+      <hr style="opacity:.15;margin:20px 0">
+      <div class="cm-muted">Material difference</div>
+      <h2 id="materialDiff">0</h2>
+      <div class="cm-muted">At 50 completed full moves: 3+ material advantage wins; 0–2 difference is a draw.</div>
+    </aside>
+
+    <article class="cm-player" id="blackCard">
+      <div class="kicker">BLACK</div>
+      <h2 id="blackName">—</h2>
+      <div class="cm-clock" id="blackClock">08:00</div>
+      <div class="cm-stats">
+        <div class="cm-stat"><small>Material</small><b id="blackMaterial">39</b></div>
+        <div class="cm-stat"><small>Tournament pts</small><b id="blackTournament">0.0</b></div>
+        <div class="cm-stat"><small>Moves</small><b id="blackMoves">0</b></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="cm-control-card">
+    <div class="cm-match-head">
+      <div>
+        <div class="kicker">YOUR MOVE CONTROL</div>
+        <h2 id="youAre">Loading...</h2>
+      </div>
+      <div class="pill" id="captureSummary">NO CAPTURE SELECTED</div>
+    </div>
+
+    <p class="cm-muted">If your move captured a piece, select that piece first. Then press MOVE DONE. The server stops your clock, counts the move, updates material points and starts the opponent clock.</p>
+
+    <div class="cm-capture-buttons" id="captureButtons">
+      <button class="cm-capture selected" data-piece="">No capture</button>
+      <button class="cm-capture" data-piece="pawn">Pawn · 1</button>
+      <button class="cm-capture" data-piece="knight">Knight · 3</button>
+      <button class="cm-capture" data-piece="bishop">Bishop · 3</button>
+      <button class="cm-capture" data-piece="rook">Rook · 5</button>
+      <button class="cm-capture" data-piece="queen">Queen · 9</button>
+    </div>
+
+    <button class="btn primary cm-big-button" id="moveDoneButton">MOVE DONE</button>
+
+    <div class="cm-actions" style="margin-top:12px">
+      <button class="btn danger" id="resignButton">RESIGN</button>
+      <button class="btn" id="refreshMatch">REFRESH</button>
+    </div>
+
+    <div class="status" id="matchMessage"></div>
+  </section>
+</main>
+</body>
+</html>

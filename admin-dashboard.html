@@ -1,1 +1,125 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Competition Admin | BYTEFEST 2026</title><link rel="stylesheet" href="competition.css?v=2.0.0"><script src="config.js?v=2.0.0" defer></script><script src="admin-dashboard.js?v=2.0.0" defer></script></head><body><main class="admin-shell"><header class="admin-head"><div class="portal-brand"><div class="mini-orb"><img src="assets/invictus-logo.png" alt="Invictus Tech Club"></div><div><strong>BYTEFEST COMPETITION CONTROL</strong><small>APPROVED REGISTRATIONS · LIVE STATUS · SCORES · SECURITY</small></div></div><div class="admin-actions"><a class="btn" id="projectorLink" href="projector.html?event=Code%20Sprint" target="_blank">PROJECTOR</a><button class="btn" id="logoutButton">LOGOUT</button></div></header><div class="tabs"><button class="tab active" data-event="Code Sprint">CODE SPRINT</button><button class="tab" data-event="Bug Hunt">BUG HUNT</button></div><section class="card admin-toolbar"><div><strong id="eventTitle">Code Sprint</strong><div class="status" id="adminStatus">Loading approved registrations...</div></div><div class="admin-actions"><button class="btn good" id="startBugHunt" hidden>START BUG HUNT</button><span class="pill" id="bugHuntPhase" hidden>NOT STARTED</span><button class="btn" id="refreshButton">REFRESH</button></div></section><div class="table-wrap"><table><thead><tr><th>Registration ID</th><th>Team</th><th>Password</th><th>Members</th><th>Status</th><th>Stage</th><th>R1</th><th>R2</th><th id="r3Head">R3</th><th id="surpriseHead">Surprise</th><th>Total</th><th>Hints</th><th>Rank</th><th>Security</th><th>Actions</th></tr></thead><tbody id="teamRows"></tbody></table></div></main></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Competition Admin | BYTEFEST 2026</title>
+  <link rel="stylesheet" href="competition.css?v=3.0.0">
+  <link rel="stylesheet" href="checkmate.css?v=1.0.0">
+  <script src="config.js?v=2.0.0" defer></script>
+  <script src="admin-dashboard.js?v=3.0.0" defer></script>
+</head>
+<body>
+<main class="admin-shell">
+  <header class="admin-head">
+    <div class="portal-brand">
+      <div class="mini-orb"><img src="assets/invictus-logo.png" alt="Invictus Tech Club"></div>
+      <div>
+        <strong>BYTEFEST COMPETITION CONTROL</strong>
+        <small>APPROVED REGISTRATIONS · LIVE STATUS · SCORES · SECURITY</small>
+      </div>
+    </div>
+    <div class="admin-actions">
+      <a class="btn" id="projectorLink" href="projector.html?event=Code%20Sprint" target="_blank">PROJECTOR</a>
+      <button class="btn" id="logoutButton">LOGOUT</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-event="Code Sprint">CODE SPRINT</button>
+    <button class="tab" data-event="Bug Hunt">BUG HUNT</button>
+    <button class="tab" data-event="Checkmate">CHECKMATE</button>
+  </div>
+
+  <section class="card admin-toolbar">
+    <div>
+      <strong id="eventTitle">Code Sprint</strong>
+      <div class="status" id="adminStatus">Loading approved registrations...</div>
+    </div>
+    <div class="admin-actions">
+      <span class="pill" id="eventPhase">NOT STARTED</span>
+      <button class="btn good" id="startEventButton">START CODE SPRINT</button>
+      <button class="btn danger" id="stopEventButton" hidden>STOP CODE SPRINT</button>
+      <button class="btn good" id="resumeEventButton" hidden>RESUME CODE SPRINT</button>
+      <button class="btn" id="refreshButton">REFRESH</button>
+    </div>
+  </section>
+
+  <section id="standardAdminSection">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Registration ID</th><th>Team</th><th>Password</th><th>Members</th>
+            <th>Status</th><th>Stage</th><th>R1</th><th>R2</th>
+            <th id="r3Head">R3</th><th id="surpriseHead">Surprise</th>
+            <th>Total</th><th>Hints</th><th>Rank</th><th>Security</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="teamRows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="checkmateAdminSection" hidden>
+    <section class="card cm-admin-create">
+      <div>
+        <div class="kicker">CREATE CHECKMATE MATCH</div>
+        <p class="cm-muted">Use approved Checkmate Registration IDs. Round 1–3 are league rounds; semifinal and final are knockout.</p>
+      </div>
+      <form id="createMatchForm" class="cm-create-grid">
+        <label>Stage
+          <select id="matchPhase" class="select" required>
+            <option value="round1">Round 1</option>
+            <option value="round2">Round 2</option>
+            <option value="round3">Round 3</option>
+            <option value="semifinal">Semifinal</option>
+            <option value="final">Final</option>
+          </select>
+        </label>
+        <label>White Registration ID
+          <input id="whiteId" class="input" list="checkmatePlayers" placeholder="BF26-XXXXXXXX" required>
+        </label>
+        <label>Black Registration ID
+          <input id="blackId" class="input" list="checkmatePlayers" placeholder="BF26-XXXXXXXX" required>
+        </label>
+        <label>Board
+          <input id="boardNumber" class="input" type="number" min="1" value="1" required>
+        </label>
+        <label>Time Control<input class="input" value="8 + 3 seconds" readonly></label>
+        <button class="btn primary" type="submit">CREATE MATCH</button>
+      </form>
+      <datalist id="checkmatePlayers"></datalist>
+    </section>
+
+    <div class="cm-admin-section-title">PLAYER RANKING + ALL POINTS</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th><th>Registration ID</th><th>Player</th><th>Password</th>
+            <th>Tournament Pts</th><th>W / D / L</th><th>Capture Pts</th>
+            <th>Material +/-</th><th>Current Material</th><th>Moves</th><th>Current Match</th>
+          </tr>
+        </thead>
+        <tbody id="checkmatePlayerRows"></tbody>
+      </table>
+    </div>
+
+    <div class="cm-admin-section-title">LIVE / CREATED MATCHES</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Board</th><th>Stage</th><th>White</th><th>Black</th><th>Status</th>
+            <th>Clock</th><th>Material</th><th>Capture Pts</th><th>Moves</th><th>Result</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="checkmateMatchRows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

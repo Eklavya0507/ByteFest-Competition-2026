@@ -1,1 +1,27 @@
-<!doctype html><meta charset="utf-8"><script>location.replace("participant-login.html")</script>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
+    <title>Code Sprint Login | BYTEFEST 2026</title>
+    <link rel="stylesheet" href="codesprint.css?v=1.0.0">
+    <script src="config.js?v=2.3.0" defer></script>
+    <script src="codesprint-login.js?v=1.0.0" defer></script>
+</head>
+<body>
+    <main class="cs-login-wrap">
+        <section class="cs-card cs-login">
+            <div class="cs-brand"><span class="cs-mark">CS</span><div><strong>BYTEFEST 2026</strong><small>CODE SPRINT · TEAM LOGIN</small></div></div>
+            <h1>Enter the arena.</h1>
+            <p>Use the Team ID and password issued for your approved Code Sprint registration.</p>
+            <form id="csLoginForm">
+                <label class="cs-field">Team ID<input id="teamId" autocomplete="off" required placeholder="CS-012"></label>
+                <label class="cs-field">Password<input id="teamPassword" type="password" autocomplete="off" required placeholder="Team password"></label>
+                <button class="cs-btn primary" id="loginButton" type="submit" style="width:100%">ENTER COMPETITION</button>
+                <div class="cs-status" id="loginStatus" role="status"></div>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

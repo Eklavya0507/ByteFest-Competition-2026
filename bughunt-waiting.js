@@ -1,1 +1,20 @@
-(function(){const API=window.BYTEFEST_CONFIG.API_URL,token=sessionStorage.getItem("bytefest_bughunt_token"),PAGE={round1:"bughunt-round1.html",round2:"bughunt-round2.html",round3:"bughunt-round3.html",surprise:"bughunt-surprise.html",final:"bughunt-final.html"};if(!token){location.replace("participant-login.html");return;}history.pushState(null,"",location.href);addEventListener("popstate",()=>history.go(1));async function load(){try{const r=await fetch(`${API}/api/bughunt/state`,{headers:{Authorization:`Bearer ${token}`}}),d=await r.json();if(r.status===401){sessionStorage.removeItem("bytefest_bughunt_token");location.replace("participant-login.html");return;}if(PAGE[d.currentRound]){location.replace(PAGE[d.currentRound]);return;}document.getElementById("waitTeam").textContent=d.registrationId;document.getElementById("waitScore").textContent=d.qualificationScore||0;const rank=document.getElementById("waitRank");if(d.rank){rank.hidden=false;rank.textContent=`RANK #${d.rank}`;}const messages={waiting_start:["Arena Ready","Bug Hunt has not started yet. Keep this page open; Round 1 will unlock after the coordinator starts the event."],awaiting_ranking:["Calculating Ranking","Scores are being calculated automatically."],eliminated:["Competition Completed",d.rank?`Your qualification rank is #${d.rank}. Top 3 advance to the Final.`:"Thank you for competing."],completed:[d.finalPlace===1?"🏆 BUG HUNT CHAMPION":d.finalPlace===2?"🥈 SECOND PLACE":"🥉 THIRD PLACE",`Final completed. Official place: #${d.finalPlace||"-"}.`]};const m=messages[d.currentRound]||["Waiting","Keep this page open."];document.getElementById("waitTitle").textContent=m[0];document.getElementById("waitText").textContent=m[1];}catch(e){document.getElementById("waitText").textContent=e.message;}}document.getElementById("refreshStatus").addEventListener("click",load);load();setInterval(load,5000);})();
+(function(){
+ const API=window.BYTEFEST_CONFIG.API_URL,token=sessionStorage.getItem("bytefest_bughunt_token");
+ const PAGE={waiting_start:"bughunt-waiting.html",round1:"bughunt-round1.html",round2:"bughunt-round2.html",round3:"bughunt-round3.html",surprise:"bughunt-surprise.html",final:"bughunt-final.html",awaiting_ranking:"bughunt-waiting.html",eliminated:"bughunt-waiting.html",completed:"bughunt-waiting.html"};
+ if(!token){location.replace("participant-login.html");return}
+ history.pushState(null,"",location.href);addEventListener("popstate",()=>history.go(1));
+ async function read(r){const t=await r.text();try{return t?JSON.parse(t):{}}catch{return{}}}
+ async function load(){
+  try{
+   const r=await fetch(`${API}/api/bughunt/state`,{headers:{Authorization:`Bearer ${token}`}});
+   const d=await read(r);if(r.status===401){sessionStorage.removeItem("bytefest_bughunt_token");location.replace("participant-login.html");return}
+   if(!r.ok)throw new Error(d.message||"Unable to load Bug Hunt state");
+   const title=document.getElementById("waitTitle"),msg=document.getElementById("waitMessage"),st=document.getElementById("waitStatus");
+   if(["round1","round2","round3","surprise","final"].includes(d.currentRound)){location.replace(PAGE[d.currentRound]);return}
+   if(d.currentRound==="eliminated"){title.textContent="THANK YOU";msg.textContent="Your Bug Hunt run is complete. Final qualification was not reached.";st.textContent=d.rank?`RANK #${d.rank}`:"ELIMINATED";return}
+   if(d.currentRound==="completed"){title.textContent=d.finalPlace?`FINAL #${d.finalPlace}`:"COMPLETED";msg.textContent="Bug Hunt is completed.";st.textContent="RESULT SAVED";return}
+   title.textContent="WAIT FOR START";msg.textContent="Keep this page open. The next official stage will open automatically.";st.textContent="CHECKING OFFICIAL TIMER";
+  }catch(e){document.getElementById("waitStatus").textContent=e.message}
+ }
+ load();setInterval(load,2000);
+})();
