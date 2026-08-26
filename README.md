@@ -25,3 +25,9 @@ Then enable GitHub Pages for this repository.
 - `admin-login.html` coordinator/admin login
 - `codesprint-admin.html` team creation and live control
 - `codesprint-projector.html` leaderboard/projector
+
+
+## Final Admin
+- Use only `admin-dashboard.html`.
+- `admin-login.html` redirects to `admin-dashboard.html` after successful login.
+- Legacy `codesprint-admin.html` redirects to the unified dashboard.

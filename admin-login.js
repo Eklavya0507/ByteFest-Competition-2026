@@ -13,7 +13,7 @@
     if (existing) {
         fetch(`${API}/api/admin/session`, { headers: { Authorization: `Bearer ${existing}` } })
             .then(response => {
-                if (response.ok) location.replace("codesprint-admin.html");
+                if (response.ok) location.replace("admin-dashboard.html");
                 else localStorage.removeItem("bytefest_competition_admin");
             })
             .catch(() => {});
@@ -33,7 +33,7 @@
             const data = await readJson(response);
             if (!response.ok) throw new Error(data.message || "Login failed");
             localStorage.setItem("bytefest_competition_admin", data.token);
-            location.replace("codesprint-admin.html");
+            location.replace("admin-dashboard.html");
         } catch (error) {
             status.className = "cs-status bad";
             status.textContent = error.message;
