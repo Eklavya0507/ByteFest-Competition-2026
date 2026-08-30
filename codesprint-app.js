@@ -98,6 +98,13 @@
     function renderHints(hints) {
         const box = document.getElementById("hintList");
         box.replaceChildren();
+        if (!hints || !hints.length) {
+            const empty = document.createElement("div");
+            empty.className = "cs-hint";
+            empty.textContent = "No hint available in this stage.";
+            box.appendChild(empty);
+            return;
+        }
         hints.forEach(hint => {
             const card = document.createElement("div");
             card.className = "cs-hint";
@@ -142,6 +149,9 @@
             const input = document.getElementById("answerInput");
             input.value = "";
             input.placeholder = data.question.placeholder || "Enter answer";
+            if (window.BytefestQuestionUI) {
+                window.BytefestQuestionUI.render(data.question, { mount: document.querySelector(".cs-question"), input });
+            }
             renderHints(data.question.hints);
             startClock(data);
         } catch (error) {
