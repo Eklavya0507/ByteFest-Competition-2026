@@ -102,6 +102,8 @@
       const data = await login(event, registrationId, password);
       const tokenKey = event === "Code Sprint" ? "bytefest_codesprint_token" : "bytefest_bughunt_token";
       sessionStorage.setItem(tokenKey, data.token);
+      if (event === "Code Sprint") sessionStorage.removeItem("bytefest_codesprint_secure_session");
+      if (event === "Bug Hunt") sessionStorage.removeItem("bytefest_bughunt_secure_session");
       status.className = "status good";
       status.textContent = `Welcome ${data.teamName || "Participant"}. Opening competition...`;
 

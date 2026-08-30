@@ -1,0 +1,21 @@
+BYTEFEST 2026 - NO LAB / TEAM DEVICE PLAN
+
+Recommended setup
+- One device per team for Code Sprint and Bug Hunt.
+- A phone or tablet is enough; laptop is optional.
+- Ask teams to keep the device in landscape mode where possible.
+- Keep chargers/power banks and 2-3 spare devices with coordinators.
+- Use the same Wi-Fi/hotspot area for all teams when possible.
+
+Security behavior in v9
+- The secure-mode gate appears only once in the participant session.
+- On desktop/laptop, first start requests fullscreen.
+- On phone/tablet, fullscreen is not required because mobile browser fullscreen support is inconsistent.
+- Tab/app hiding still creates a security violation.
+- Desktop focus-loss monitoring remains active.
+- A new team login clears the previous device's secure-session flag.
+
+Practical event rule
+- One team leader controls the device; all team members may discuss.
+- Do not permit calls, messaging apps, external search, AI tools, or switching apps during the challenge.
+- Coordinator should keep 2-3 spare devices ready for genuine technical failures.

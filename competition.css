@@ -89,3 +89,14 @@ code{color:var(--accent)}
   .home-grid{grid-template-columns:1fr}.hero-logo{order:-1}.event-cards{grid-template-columns:1fr}
   .bh-layout{grid-template-columns:1fr}.bh-side{position:static}
 }
+
+/* v9 compact Bug Hunt + mobile team-device mode */
+.bh-shell{padding:10px clamp(12px,2vw,28px) 18px}
+.bh-top{padding:6px 0 9px}.bh-meta{gap:5px}.bh-meta .pill{padding:5px 7px;font-size:10px}
+.bh-layout{grid-template-columns:minmax(0,1fr) 230px;gap:10px}.bh-main,.bh-side{padding:14px}.bh-side{top:10px}
+.bh-main>h1{font-size:clamp(25px,3vw,36px)!important;margin:5px 0!important}.stage-progress{gap:5px;margin:7px 0 9px}.stage{padding:5px 8px;font-size:10px}
+.question-box{padding:12px 14px;border-radius:13px}.question-box h2{font-size:18px;margin:0 0 6px}.question-box p{font-size:13.2px;line-height:1.42}
+.answer-form{margin-top:9px}.answer-form .input{min-height:41px;padding:8px 11px;font-size:13px}.answer-form .btn{min-height:38px!important;margin-top:7px!important;font-size:12px}
+.bh-side h2{font-size:14px;margin:3px 0}.bh-side .lead{display:none}.hint-card{padding:7px;margin-top:5px;border-radius:9px}.hint-card button{font-size:10.5px}.hint-text{margin-top:6px;padding-top:6px;font-size:11px;line-height:1.35}
+@media(max-height:780px) and (min-width:951px){.bh-main,.bh-side{padding:10px}.question-box p{font-size:12.5px}.qv-root{margin-top:6px;padding:8px}}
+@media(max-width:950px){.bh-layout{grid-template-columns:1fr}.bh-side{position:static}.bh-main,.bh-side{padding:11px}.question-box p{font-size:12.8px}.secure-box{padding:22px}}

@@ -9,8 +9,11 @@
     const unlockPassword = document.getElementById("unlockPassword");
     const unlockStatus = document.getElementById("unlockStatus");
     const dqButton = document.getElementById("disqualifyButton");
+    const secureSessionKey = "bytefest_codesprint_secure_session";
+    const mobileDevice = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
     let state = null;
-    let secureStarted = false;
+    let secureStarted = sessionStorage.getItem(secureSessionKey) === "1";
+    let enforceFullscreenThisPage = false;
     let violationInFlight = false;
     let lastViolationAt = 0;
 
@@ -284,21 +287,32 @@
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) recordViolation("Competition page hidden / tab or application switch");
     });
-    window.addEventListener("blur", () => recordViolation("Competition window lost focus"));
+    if (!mobileDevice) window.addEventListener("blur", () => recordViolation("Competition window lost focus"));
     document.addEventListener("fullscreenchange", () => {
-        if (secureStarted && !document.fullscreenElement && !state?.security?.locked) {
+        if (secureStarted && enforceFullscreenThisPage && !document.fullscreenElement && !state?.security?.locked) {
             recordViolation("Fullscreen exited");
         }
     });
 
+    async function startSecureSession() {
+        if (!mobileDevice && !secureStarted) {
+            await document.documentElement.requestFullscreen();
+            enforceFullscreenThisPage = true;
+        }
+        secureStarted = true;
+        sessionStorage.setItem(secureSessionKey, "1");
+        secureGate.style.display = "none";
+        await loadState(false);
+        await loadQuestion();
+    }
+
     enterSecureButton.addEventListener("click", async () => {
         try {
-            await document.documentElement.requestFullscreen();
-            secureStarted = true;
-            secureGate.style.display = "none";
-            await loadQuestion();
+            await startSecureSession();
         } catch {
-            document.getElementById("secureStatus").textContent = "Fullscreen permission is required to start.";
+            document.getElementById("secureStatus").textContent = mobileDevice
+                ? "Tap START SECURE MODE again."
+                : "Fullscreen permission is required only for the first desktop start.";
         }
     });
 
@@ -313,11 +327,14 @@
             unlockPassword.value = "";
             unlockStatus.textContent = data.message;
             lockOverlay.classList.remove("active");
-            secureGate.style.display = "grid";
-            document.getElementById("secureTitle").textContent = "Resume Secure Mode";
-            document.getElementById("secureText").textContent = "Return to fullscreen to continue the current challenge.";
-            enterSecureButton.textContent = "RESUME FULLSCREEN";
+            if (!mobileDevice && document.fullscreenEnabled) {
+                await document.documentElement.requestFullscreen().then(() => { enforceFullscreenThisPage = true; }).catch(() => {});
+            }
+            secureStarted = true;
+            sessionStorage.setItem(secureSessionKey, "1");
+            secureGate.style.display = "none";
             await loadState(false);
+            await loadQuestion();
         } catch (error) {
             unlockStatus.textContent = error.message;
         }
@@ -339,5 +356,15 @@
 
     document.getElementById("answerForm").addEventListener("submit", submitAnswer);
 
-    loadState(true).catch(error => setStatus(error.message, true));
+    if (secureStarted) {
+        secureGate.style.display = "none";
+        loadState(true).then(() => loadQuestion()).catch(error => setStatus(error.message, true));
+    } else {
+        if (mobileDevice) {
+            document.getElementById("secureTitle").textContent = "Ready on Team Device?";
+            document.getElementById("secureText").textContent = "Phone/tablet mode does not require fullscreen. App switching or hiding the competition page still triggers security.";
+            enterSecureButton.textContent = "START SECURE MODE";
+        }
+        loadState(true).catch(error => setStatus(error.message, true));
+    }
 }());

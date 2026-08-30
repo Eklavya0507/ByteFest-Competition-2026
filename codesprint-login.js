@@ -56,6 +56,7 @@
             const data = await json(response);
             if (!response.ok) throw new Error(data.message || "Login failed");
             sessionStorage.setItem("bytefest_codesprint_token", data.token);
+            sessionStorage.removeItem("bytefest_codesprint_secure_session");
             sessionStorage.setItem("bytefest_codesprint_team", data.teamId);
             status.className = "cs-status good";
             status.textContent = "Login successful.";

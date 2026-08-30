@@ -104,6 +104,7 @@
               ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
               : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
             <button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>
+            <button class="btn danger restart-team" data-id="${esc(team.registrationId)}">RESTART</button>
           </div>
         </td>
       </tr>
@@ -224,6 +225,18 @@
   });
 
   rows.addEventListener("click", async eventObject => {
+    const restartButton = eventObject.target.closest(".restart-team");
+    if (restartButton) {
+      const id = restartButton.dataset.id;
+      if (!confirm(`RESTART ${eventName} for ${id}?\n\nScores, submissions, hints, rank and security progress will be cleared. Registration ID, team name and password stay the same.`)) return;
+      try {
+        const result = await req(`/api/competition/admin/team/${encodeURIComponent(eventName)}/${encodeURIComponent(id)}/restart`, { method: "POST" });
+        alert(result.message);
+        load();
+      } catch (error) { alert(error.message); }
+      return;
+    }
+
     const button = eventObject.target.closest(".act");
     if (!button) return;
 
@@ -295,6 +308,42 @@
       }
       load();
     } catch (error) { alert(error.message); }
+  });
+
+  document.getElementById("exportExcelButton").addEventListener("click", async () => {
+    const button = document.getElementById("exportExcelButton");
+    button.disabled = true;
+    const oldText = button.textContent;
+    button.textContent = "BUILDING EXCEL...";
+    try {
+      const response = await fetch(`${API}/api/competition/admin/report/${encodeURIComponent(eventName)}.xlsx`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.status === 401) {
+        localStorage.removeItem("bytefest_competition_admin");
+        location.replace("admin-login.html");
+        return;
+      }
+      if (!response.ok) {
+        let message = "Could not create Excel report";
+        try { message = (await response.json()).message || message; } catch {}
+        throw new Error(message);
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `BYTEFEST_2026_${eventName.replaceAll(" ", "_")}_Official_Report.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      button.disabled = false;
+      button.textContent = oldText;
+    }
   });
 
   document.getElementById("refreshButton").addEventListener("click", load);
