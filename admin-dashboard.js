@@ -14,6 +14,7 @@
   const status = document.getElementById("adminStatus");
   const phase = document.getElementById("eventPhase");
   const eventControlButton = document.getElementById("eventControlButton");
+  const resetBugHuntButton = document.getElementById("resetBugHuntButton");
   const standardSection = document.getElementById("standardAdminSection");
   const checkmateSection = document.getElementById("checkmateAdminSection");
   const createMatchForm = document.getElementById("createMatchForm");
@@ -67,8 +68,9 @@
 
       const upper = eventName.toUpperCase();
       const running = control.status === "running";
-      eventControlButton.dataset.action = running ? "stop" : (control.status === "paused" ? "resume" : "start");
-      eventControlButton.textContent = running ? `STOP ${upper}` : `START ${upper}`;
+      const paused = control.status === "paused";
+      eventControlButton.dataset.action = running ? "stop" : (paused ? "resume" : "start");
+      eventControlButton.textContent = running ? `STOP ${upper}` : paused ? `RESUME ${upper}` : `START ${upper}`;
       eventControlButton.classList.toggle("danger", running);
       eventControlButton.classList.toggle("good", !running);
     } catch (error) {
@@ -100,10 +102,12 @@
         }</td>
         <td>
           <div class="admin-actions">
-            ${team.locked
-              ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
-              : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
-            <button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>
+            ${team.disqualified && eventName === "Bug Hunt"
+              ? `<button class="btn good act" data-action="resume" data-id="${esc(team.registrationId)}">ONE MORE CHANCE</button>`
+              : team.locked
+                ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
+                : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
+            ${team.disqualified ? "" : `<button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>`}
             <button class="btn danger restart-team" data-id="${esc(team.registrationId)}">RESTART</button>
           </div>
         </td>
@@ -197,6 +201,7 @@
     status.textContent = "Loading approved registrations...";
     standardSection.hidden = eventName === "Checkmate";
     checkmateSection.hidden = eventName !== "Checkmate";
+    resetBugHuntButton.hidden = eventName !== "Bug Hunt";
 
     document.getElementById("r3Head").style.display = eventName === "Bug Hunt" ? "" : "none";
     document.getElementById("surpriseHead").style.display = eventName === "Bug Hunt" ? "" : "none";
@@ -240,6 +245,10 @@
     const button = eventObject.target.closest(".act");
     if (!button) return;
 
+    if (button.dataset.action === "resume") {
+      if (!confirm(`Give ONE MORE CHANCE to ${button.dataset.id}?\n\nThe DQ/lock will be removed and the team will rejoin the CURRENT official Bug Hunt phase. Existing score and completed progress will be kept.`)) return;
+    }
+
     try {
       await req(`/api/competition/admin/team/${encodeURIComponent(eventName)}/${encodeURIComponent(button.dataset.id)}/security`, {
         method: "PATCH",
@@ -254,12 +263,31 @@
 
   eventControlButton.addEventListener("click", async () => {
     const action = eventControlButton.dataset.action || "start";
-    const verb = action === "stop" ? "STOP" : "START";
+    const verb = action === "stop" ? "STOP" : action === "resume" ? "RESUME" : "START";
     if (!confirm(`${verb} ${eventName} now?`)) return;
     try {
       await req(`/api/competition/admin/control/${eventSlug(eventName)}/${action}`, { method: "POST" });
       load();
     } catch (error) { alert(error.message); }
+  });
+
+  resetBugHuntButton.addEventListener("click", async () => {
+    const typed = prompt(
+      "FRESH BUG HUNT RESET\n\nThis clears ONLY Bug Hunt competition test progress: scores, hints, DQ, ranks, results and old Bug Hunt team sessions. Approved registrations are NOT deleted.\n\nType RESET BUG HUNT to continue:"
+    );
+    if (typed !== "RESET BUG HUNT") return;
+
+    try {
+      const result = await req("/api/competition/admin/bughunt/reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: typed })
+      });
+      alert(result.message + "\n\nNow press START BUG HUNT when the real event is ready. Participants should log in again.");
+      load();
+    } catch (error) {
+      alert(error.message);
+    }
   });
 
   createMatchForm.addEventListener("submit", async eventObject => {

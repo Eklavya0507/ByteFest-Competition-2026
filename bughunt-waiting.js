@@ -11,6 +11,7 @@
    if(!r.ok)throw new Error(d.message||"Unable to load Bug Hunt state");
    const title=document.getElementById("waitTitle"),msg=document.getElementById("waitMessage"),st=document.getElementById("waitStatus");
    if(["round1","round2","round3","surprise","final"].includes(d.currentRound)){location.replace(PAGE[d.currentRound]);return}
+   if(d.security?.disqualified){title.textContent="DISQUALIFIED";msg.textContent="Your team is currently disqualified. If the coordinator grants ONE MORE CHANCE, this page will automatically return you to the current official Bug Hunt phase.";st.textContent="WAITING FOR COORDINATOR";return}
    if(d.currentRound==="eliminated"){title.textContent="THANK YOU";msg.textContent="Your Bug Hunt run is complete. Final qualification was not reached.";st.textContent=d.rank?`RANK #${d.rank}`:"ELIMINATED";return}
    if(d.currentRound==="completed"){title.textContent=d.finalPlace?`FINAL #${d.finalPlace}`:"COMPLETED";msg.textContent="Bug Hunt is completed.";st.textContent="RESULT SAVED";return}
    title.textContent="WAIT FOR START";msg.textContent="Keep this page open. The next official stage will open automatically.";st.textContent="CHECKING OFFICIAL TIMER";
