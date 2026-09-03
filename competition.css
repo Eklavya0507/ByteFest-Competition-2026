@@ -100,3 +100,26 @@ code{color:var(--accent)}
 .bh-side h2{font-size:14px;margin:3px 0}.bh-side .lead{display:none}.hint-card{padding:7px;margin-top:5px;border-radius:9px}.hint-card button{font-size:10.5px}.hint-text{margin-top:6px;padding-top:6px;font-size:11px;line-height:1.35}
 @media(max-height:780px) and (min-width:951px){.bh-main,.bh-side{padding:10px}.question-box p{font-size:12.5px}.qv-root{margin-top:6px;padding:8px}}
 @media(max-width:950px){.bh-layout{grid-template-columns:1fr}.bh-side{position:static}.bh-main,.bh-side{padding:11px}.question-box p{font-size:12.8px}.secure-box{padding:22px}}
+
+/* v11 admin progress + ranking */
+.admin-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:0 0 12px}
+.admin-summary-card{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:12px 14px;min-height:70px}
+.admin-summary-card small{display:block;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.admin-summary-card strong{font-size:22px;line-height:1}
+.admin-rank-note{margin:0 0 14px;color:var(--muted);font-size:12px}
+.progress-detail summary{cursor:pointer;list-style:none;min-width:210px}
+.progress-detail summary::-webkit-details-marker{display:none}
+.progress-detail[open] summary{margin-bottom:8px}
+.progress-audit{display:grid;gap:5px;min-width:260px;font-size:11px;color:var(--muted)}
+.progress-audit-row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid rgba(255,255,255,.07);padding-top:5px}
+.progress-audit-row b{color:var(--text);font-weight:800}
+.rank-source{display:block;margin-top:3px;font-size:9px;letter-spacing:.08em;color:var(--muted)}
+.rank-source.manual{color:var(--warn,#ffb86b);font-weight:900}
+.live-rank{font-weight:900;color:var(--good)}
+
+.hide-col{display:none!important}
+
+/* Coordinator unlock: visually mask without a password input so browser password managers do not show Save/Update Password. */
+.coordinator-key-input{-webkit-text-security:disc;text-security:disc}
+.coordinator-session-note{min-height:18px;margin-top:8px;font-size:12px;color:#9fb4c8}
+.coordinator-session-note.good{color:#43e6a0}

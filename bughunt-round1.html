@@ -4,11 +4,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Round 1 | BYTEFEST 2026</title>
-<link rel="stylesheet" href="competition.css?v=9.0.0">
+<link rel="stylesheet" href="competition.css?v=12.0.0">
 <link rel="stylesheet" href="question-ui.css?v=9.0.0">
 <script src="config.js?v=2.0.0" defer></script>
 <script src="question-ui.js?v=9.0.0" defer></script>
-<script src="bughunt-app.js?v=9.0.0" defer></script>
+<script src="bughunt-app.js?v=12.0.0" defer></script>
 </head>
 <body data-round="round1">
 <main class="bh-shell">
@@ -64,8 +64,9 @@
     <h2>Competition Locked</h2>
     <p id="lockReason">Security violation</p>
     <div class="pill bad">VIOLATION <span id="lockCount" style="margin-left:4px">0/4</span></div>
-    <form id="unlockForm" style="margin-top:18px">
-      <input class="input" id="unlockPassword" type="password" placeholder="Coordinator password">
+    <form id="unlockForm" style="margin-top:18px" autocomplete="off">
+      <input class="input coordinator-key-input" id="coordinatorAccessKey" name="coordinator_access_key" type="text" autocomplete="off" data-lpignore="true" data-1p-ignore="true" spellcheck="false" autocapitalize="off" placeholder="Coordinator access key">
+      <div class="coordinator-session-note" id="coordinatorSessionNote"></div>
       <div class="admin-actions" style="justify-content:center;margin-top:10px">
         <button class="btn good" type="submit">RESUME</button>
         <button class="btn danger" id="disqualifyButton" type="button" hidden>DISQUALIFY</button>

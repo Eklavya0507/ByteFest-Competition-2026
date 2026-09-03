@@ -6,7 +6,8 @@
     return;
   }
 
-  let eventName = "Code Sprint";
+  let eventName = "Bug Hunt";
+  let loadBusy = false;
 
   const rows = document.getElementById("teamRows");
   const playerRows = document.getElementById("checkmatePlayerRows");
@@ -18,6 +19,7 @@
   const standardSection = document.getElementById("standardAdminSection");
   const checkmateSection = document.getElementById("checkmateAdminSection");
   const createMatchForm = document.getElementById("createMatchForm");
+  const summary = document.getElementById("adminSummary");
 
   function esc(value) {
     return String(value ?? "").replace(/[&<>"']/g, char => ({
@@ -64,7 +66,9 @@
   async function loadControl() {
     try {
       const control = await req(`/api/competition/admin/control/${eventSlug(eventName)}`);
-      phase.textContent = phaseLabel(control.status || "not_started");
+      phase.textContent = eventName === "Bug Hunt" && control.competitionPhase
+        ? `${phaseLabel(control.status || "not_started")} · ${phaseLabel(control.competitionPhase)}`
+        : phaseLabel(control.status || "not_started");
 
       const upper = eventName.toUpperCase();
       const running = control.status === "running";
@@ -78,41 +82,103 @@
     }
   }
 
+  function summaryCard(label, value) {
+    return `<div class="admin-summary-card"><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`;
+  }
+
+  function renderStandardSummary(data) {
+    const entered = data.filter(team => team.loggedIn).length;
+    const dq = data.filter(team => team.disqualified).length;
+    const completed = data.filter(team => team.currentRound === "completed").length;
+    const waitingRank = data.filter(team => /WAITING FOR (QUALIFICATION|RANKING)/.test(team.progressLabel || "")).length;
+    const ranked = data.filter(team => team.rank).length;
+    summary.innerHTML = [
+      summaryCard("Approved", data.length),
+      summaryCard("Entered", entered),
+      summaryCard("Waiting Rank", waitingRank),
+      summaryCard("Ranked", ranked),
+      summaryCard("Completed", completed),
+      summaryCard("DQ", dq)
+    ].join("");
+  }
+
+  function progressAudit(team) {
+    const details = team.progressDetails || [];
+    if (!details.length) return "";
+    return `<div class="progress-audit">${details.map(item => `
+      <div class="progress-audit-row">
+        <span>${esc(phaseLabel(item.key))} ${item.completed ? "✓" : item.started ? "•" : ""}</span>
+        <b>${item.completedStages}/${item.totalStages} · ${item.score} pts</b>
+      </div>
+    `).join("")}</div>`;
+  }
+
   function renderStandard(data) {
-    rows.innerHTML = data.map(team => `
-      <tr>
-        <td><b>${esc(team.registrationId)}</b></td>
-        <td>${esc(team.teamName || "TEAM NAME NOT SET")}</td>
-        <td><code>${esc(team.password)}</code></td>
-        <td>${esc((team.members || []).join(", "))}</td>
-        <td>${esc(team.currentRound)}</td>
-        <td>${team.currentStage || "-"}</td>
-        <td>${team.round1 || 0}</td>
-        <td>${team.round2 || 0}</td>
-        <td>${eventName === "Bug Hunt" ? (team.round3 || 0) : "-"}</td>
-        <td>${eventName === "Bug Hunt" ? (team.surprise || 0) : "-"}</td>
-        <td><b>${team.totalScore || 0}</b>${eventName === "Bug Hunt" && team.finalScore ? `<br><small>Final ${team.finalScore}</small>` : ""}</td>
-        <td>${team.hints || 0}</td>
-        <td>${team.finalPlace ? `FINAL #${team.finalPlace}` : team.rank ? `#${team.rank}` : "-"}</td>
-        <td>${team.disqualified
-          ? '<span class="pill bad">DISQUALIFIED</span>'
-          : team.locked
-            ? `<span class="pill bad">LOCKED · ${team.violations}/4</span>`
-            : `<span class="pill live">UNLOCKED · ${team.violations}/4</span>`
-        }</td>
-        <td>
-          <div class="admin-actions">
-            ${team.disqualified && eventName === "Bug Hunt"
-              ? `<button class="btn good act" data-action="resume" data-id="${esc(team.registrationId)}">ONE MORE CHANCE</button>`
-              : team.locked
-                ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
-                : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
-            ${team.disqualified ? "" : `<button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>`}
-            <button class="btn danger restart-team" data-id="${esc(team.registrationId)}">RESTART</button>
-          </div>
-        </td>
-      </tr>
-    `).join("");
+    renderStandardSummary(data);
+    const sorted = [...data].sort((a, b) =>
+      Number(a.finalPlace || 9999) - Number(b.finalPlace || 9999)
+      || Number(a.rank || 9999) - Number(b.rank || 9999)
+      || Number(a.liveRank || 9999) - Number(b.liveRank || 9999)
+      || String(a.teamName || "").localeCompare(String(b.teamName || ""))
+    );
+
+    rows.innerHTML = sorted.map(team => {
+      const detail = (team.progressDetails || []).find(item => item.key === team.currentRound);
+      const stage = !team.loggedIn ? "-" : detail?.totalStages ? `${Math.min(Number(team.currentStage || 1), detail.totalStages)}/${detail.totalStages}` : team.currentStage || "-";
+      const thirdScore = team.round3 || 0;
+      const statusClass = team.disqualified || team.currentRound === "eliminated" ? "bad" : /COMPLETED|WAITING/.test(team.progressLabel || "") ? "live" : "";
+      const official = team.finalPlace
+        ? `FINAL #${team.finalPlace}`
+        : team.rank
+          ? `#${team.rank}`
+          : "-";
+      const officialSource = team.finalPlace ? (team.finalPlaceSource || "auto") : (team.rankSource || "auto");
+      const source = (team.finalPlace || team.rank) ? `<small class="rank-source ${officialSource === "manual" ? "manual" : ""}">${esc(officialSource.toUpperCase())}</small>` : "";
+
+      return `
+        <tr>
+          <td><b>${esc(team.registrationId)}</b></td>
+          <td>${esc(team.teamName || "TEAM NAME NOT SET")}</td>
+          <td><code>${esc(team.password)}</code></td>
+          <td>${esc((team.members || []).join(", "))}</td>
+          <td>
+            <details class="progress-detail">
+              <summary><span class="pill ${statusClass}">${esc(team.progressLabel || phaseLabel(team.currentRound))}</span></summary>
+              ${progressAudit(team)}
+            </details>
+          </td>
+          <td>${esc(stage)}</td>
+          <td>${team.round1 || 0}</td>
+          <td>${team.round2 || 0}</td>
+          <td>${thirdScore}</td>
+          <td>${team.surprise || 0}</td>
+          <td><b>${team.qualificationScore || 0}</b></td>
+          <td>${team.finalScore || 0}</td>
+          <td>${team.hints || 0}<br><small>Wrong ${team.wrongSubmissions || 0}</small></td>
+          <td>${team.liveRank ? `<span class="live-rank">#${team.liveRank}</span><br><small>PREVIEW</small>` : "-"}</td>
+          <td><b>${official}</b>${source}</td>
+          <td>${team.disqualified
+            ? '<span class="pill bad">DISQUALIFIED</span>'
+            : team.locked
+              ? `<span class="pill bad">LOCKED · ${team.violations}/4</span>`
+              : `<span class="pill live">UNLOCKED · ${team.violations}/4</span>`
+          }</td>
+          <td>
+            <div class="admin-actions">
+              <button class="btn rank-team" data-id="${esc(team.registrationId)}" data-rank="${team.rank || ""}">SET QUAL RANK</button>
+              <button class="btn final-place-team" data-id="${esc(team.registrationId)}" data-place="${team.finalPlace || ""}">SET FINAL</button>
+              ${team.disqualified
+                ? `<button class="btn good act" data-action="resume" data-id="${esc(team.registrationId)}">ONE MORE CHANCE</button>`
+                : team.locked
+                  ? `<button class="btn good act" data-action="unlock" data-id="${esc(team.registrationId)}">UNLOCK</button>`
+                  : `<button class="btn act" data-action="lock" data-id="${esc(team.registrationId)}">LOCK</button>`}
+              ${team.disqualified ? "" : `<button class="btn danger act" data-action="disqualify" data-id="${esc(team.registrationId)}">DQ</button>`}
+              <button class="btn danger restart-team" data-id="${esc(team.registrationId)}">RESTART</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
   }
 
   function renderCheckmatePlayers(data) {
@@ -121,7 +187,11 @@
 
     playerRows.innerHTML = data.map(player => `
       <tr>
-        <td>${player.rank ? `#${player.rank}` : "-"}</td>
+        <td>${player.finalPlace
+          ? `<b>FINAL #${player.finalPlace}</b><small class="rank-source ${player.finalPlaceSource === "manual" ? "manual" : ""}">${esc((player.finalPlaceSource || "auto").toUpperCase())}</small><br><small>League #${player.rank || "-"}</small>`
+          : player.rank
+            ? `<b>#${player.rank}</b><small class="rank-source ${player.rankSource === "manual" ? "manual" : ""}">${esc((player.rankSource || "auto").toUpperCase())}</small>`
+            : "-"}</td>
         <td><b>${esc(player.registrationId)}</b></td>
         <td>${esc(player.playerName)}</td>
         <td><code>${esc(player.password)}</code></td>
@@ -132,6 +202,7 @@
         <td>${player.currentMatch ? `${player.currentMatch.color === "white" ? "W" : "B"} ${player.currentMaterial}` : "-"}</td>
         <td>${player.currentMatch ? player.moves : player.totalMoves || 0}</td>
         <td>${player.currentMatch ? `Board ${player.currentMatch.boardNumber} · ${phaseLabel(player.currentMatch.phase)} · ${phaseLabel(player.currentMatch.status)}` : "WAITING"}</td>
+        <td><div class="admin-actions"><button class="btn cm-rank-player" data-id="${esc(player.registrationId)}" data-rank="${player.rank || ""}">SET RANK</button><button class="btn cm-final-player" data-id="${esc(player.registrationId)}" data-place="${player.finalPlace || ""}">SET FINAL</button></div></td>
       </tr>
     `).join("");
   }
@@ -177,6 +248,17 @@
     }).join("");
   }
 
+  function renderCheckmateSummary(players, matches) {
+    summary.innerHTML = [
+      summaryCard("Players", players.length),
+      summaryCard("Matches", matches.length),
+      summaryCard("Running", matches.filter(match => match.status === "running").length),
+      summaryCard("Waiting", matches.filter(match => match.status === "waiting").length),
+      summaryCard("Completed", matches.filter(match => match.status === "completed").length),
+      summaryCard("Ranked", players.filter(player => player.rank).length)
+    ].join("");
+  }
+
   async function loadCheckmate() {
     const [players, matches] = await Promise.all([
       req("/api/competition/admin/registrations?event=Checkmate"),
@@ -185,6 +267,7 @@
 
     renderCheckmatePlayers(players);
     renderCheckmateMatches(matches);
+    renderCheckmateSummary(players, matches);
     status.className = "status good";
     status.textContent = `${players.length} approved Checkmate participant(s) · ${matches.length} match(es).`;
   }
@@ -192,29 +275,81 @@
   async function loadStandard() {
     const data = await req(`/api/competition/admin/registrations?event=${encodeURIComponent(eventName)}`);
     renderStandard(data);
+    const entered = data.filter(team => team.loggedIn).length;
     status.className = "status good";
-    status.textContent = `${data.length} approved ${eventName} registration(s).`;
+    status.textContent = `${data.length} approved ${eventName} registration(s) · ${entered} entered competition.`;
   }
 
   async function load() {
+    if (loadBusy) return;
+    loadBusy = true;
     status.className = "status";
     status.textContent = "Loading approved registrations...";
     standardSection.hidden = eventName === "Checkmate";
     checkmateSection.hidden = eventName !== "Checkmate";
     resetBugHuntButton.hidden = eventName !== "Bug Hunt";
 
-    document.getElementById("r3Head").style.display = eventName === "Bug Hunt" ? "" : "none";
-    document.getElementById("surpriseHead").style.display = eventName === "Bug Hunt" ? "" : "none";
+    const r3Head = document.getElementById("r3Head");
+    r3Head.textContent = "R3";
+    r3Head.style.display = eventName === "Checkmate" ? "none" : "";
+    document.getElementById("surpriseHead").style.display = eventName === "Checkmate" ? "none" : "";
 
     try {
-      if (eventName === "Checkmate") await loadCheckmate();
-      else await loadStandard();
+      await Promise.all([
+        eventName === "Checkmate" ? loadCheckmate() : loadStandard(),
+        loadControl()
+      ]);
     } catch (error) {
       status.className = "status bad";
       status.textContent = error.message;
+    } finally {
+      loadBusy = false;
+    }
+  }
+
+  async function setManualRank(id, currentRank = "") {
+    const entered = prompt(
+      `MANUAL RANK FALLBACK · ${eventName}\n\nRegistration: ${id}\nCurrent rank: ${currentRank || "not locked"}\n\nEnter a rank number, or type AUTO to return this participant/team to automatic ranking:`,
+      currentRank || ""
+    );
+    if (entered === null) return;
+    const value = entered.trim();
+    if (!value) return;
+    const rank = value.toUpperCase() === "AUTO" ? "auto" : Number(value);
+    if (rank !== "auto" && (!Number.isInteger(rank) || rank < 1)) {
+      alert("Enter a positive whole-number rank, or AUTO.");
+      return;
     }
 
-    await loadControl();
+    const result = await req(`/api/competition/admin/team/${encodeURIComponent(eventName)}/${encodeURIComponent(id)}/rank`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rank })
+    });
+    alert(result.message);
+    await load();
+  }
+
+  async function setManualFinalPlace(id, currentPlace = "") {
+    const entered = prompt(
+      `MANUAL FINAL PLACE · ${eventName}\n\nRegistration: ${id}\nCurrent final place: ${currentPlace || "not locked"}\n\nEnter a final place number, or type AUTO to return it to automatic mode:`,
+      currentPlace || ""
+    );
+    if (entered === null) return;
+    const value = entered.trim();
+    if (!value) return;
+    const finalPlace = value.toUpperCase() === "AUTO" ? "auto" : Number(value);
+    if (finalPlace !== "auto" && (!Number.isInteger(finalPlace) || finalPlace < 1)) {
+      alert("Enter a positive whole-number final place, or AUTO.");
+      return;
+    }
+    const result = await req(`/api/competition/admin/team/${encodeURIComponent(eventName)}/${encodeURIComponent(id)}/final-place`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ finalPlace })
+    });
+    alert(result.message);
+    await load();
   }
 
   document.querySelectorAll(".tab").forEach(button => {
@@ -230,6 +365,20 @@
   });
 
   rows.addEventListener("click", async eventObject => {
+    const rankButton = eventObject.target.closest(".rank-team");
+    if (rankButton) {
+      try { await setManualRank(rankButton.dataset.id, rankButton.dataset.rank); }
+      catch (error) { alert(error.message); }
+      return;
+    }
+
+    const finalPlaceButton = eventObject.target.closest(".final-place-team");
+    if (finalPlaceButton) {
+      try { await setManualFinalPlace(finalPlaceButton.dataset.id, finalPlaceButton.dataset.place); }
+      catch (error) { alert(error.message); }
+      return;
+    }
+
     const restartButton = eventObject.target.closest(".restart-team");
     if (restartButton) {
       const id = restartButton.dataset.id;
@@ -258,6 +407,20 @@
       load();
     } catch (error) {
       alert(error.message);
+    }
+  });
+
+  playerRows.addEventListener("click", async eventObject => {
+    const rankButton = eventObject.target.closest(".cm-rank-player");
+    if (rankButton) {
+      try { await setManualRank(rankButton.dataset.id, rankButton.dataset.rank); }
+      catch (error) { alert(error.message); }
+      return;
+    }
+    const finalButton = eventObject.target.closest(".cm-final-player");
+    if (finalButton) {
+      try { await setManualFinalPlace(finalButton.dataset.id, finalButton.dataset.place); }
+      catch (error) { alert(error.message); }
     }
   });
 
@@ -380,6 +543,10 @@
     location.replace("admin-login.html");
   });
 
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) load();
+  });
+
   load();
-  setInterval(load, 5000);
+  setInterval(() => { if (!document.hidden) load(); }, 10000);
 })();

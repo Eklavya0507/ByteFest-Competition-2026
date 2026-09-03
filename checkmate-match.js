@@ -2,6 +2,7 @@
   const API = window.BYTEFEST_CONFIG.API_URL;
   const token1 = sessionStorage.getItem("bytefest_checkmate_player1_token");
   const token2 = sessionStorage.getItem("bytefest_checkmate_player2_token");
+  const coordinatorGrantKey = "bytefest_checkmate_coordinator_grant";
   if (!token1 || !token2) { location.replace("participant-login.html"); return; }
 
   history.pushState(null, "", location.href);
@@ -277,9 +278,22 @@
   function renderSecurity(){
     const lock=document.getElementById("checkmateSecurityLock");
     const sec=state1?.security || {violations:0,maxViolations:4,locked:false,lockReason:""};
+    const grant=sessionStorage.getItem(coordinatorGrantKey)||"";
+    const input=document.getElementById("checkmateCoordinatorAccessKey");
+    const note=document.getElementById("checkmateCoordinatorSessionNote");
     document.getElementById("checkmateLockCount").textContent=`${sec.violations||0}/${sec.maxViolations||4}`;
     document.getElementById("checkmateLockReason").textContent=sec.lockReason || "Security violation";
     lock.classList.toggle("active",Boolean(sec.locked));
+    if(grant){
+      input.value="";
+      input.hidden=true;
+      input.required=false;
+      if(note){note.textContent="Coordinator already verified on this station. Press COORDINATOR UNLOCK.";note.className="coordinator-session-note good"}
+    }else{
+      input.hidden=false;
+      input.required=true;
+      if(note){note.textContent="Coordinator verification is required once on this station.";note.className="coordinator-session-note"}
+    }
     if(sec.locked){
       document.getElementById("checkmateSecureGate").classList.remove("active");
       clockBase.running=false;
@@ -481,19 +495,21 @@
 
   document.getElementById("checkmateUnlockForm").addEventListener("submit",async event=>{
     event.preventDefault();
-    const password=document.getElementById("checkmateUnlockPassword").value;
+    const password=document.getElementById("checkmateCoordinatorAccessKey").value;
+    const grant=sessionStorage.getItem(coordinatorGrantKey)||"";
     const status=document.getElementById("checkmateUnlockStatus");
-    if(!password){status.textContent="Coordinator password is required.";return}
+    if(!password&&!grant){status.textContent="Coordinator verification is required once on this station.";return}
 
-    status.textContent="Checking coordinator password...";
+    status.textContent=grant?"Using verified coordinator session...":"Checking coordinator password...";
     try{
       const data=await request(token1,"/security/unlock",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({password})
+        body:JSON.stringify({password,grant})
       });
 
-      document.getElementById("checkmateUnlockPassword").value="";
+      if(data.unlockGrant)sessionStorage.setItem(coordinatorGrantKey,data.unlockGrant);
+      document.getElementById("checkmateCoordinatorAccessKey").value="";
       status.textContent=data.message||"Unlocked";
       state1.security={
         violations:data.violations||0,
@@ -521,9 +537,9 @@
   // Smooth clock animation, independent of backend latency.
   setInterval(paintClocks,200);
 
-  // Server reconciliation is deliberately lighter: one GET every 3 seconds.
-  // This avoids overlapping requests while the local clock remains smooth.
-  setInterval(()=>{ if(!moveBusy) refreshState(); },3000);
+  // Server reconciliation stays authoritative, while the visible clocks run locally.
+  // One GET every 4 seconds keeps moves responsive without hammering the backend.
+  setInterval(()=>{ if(!moveBusy && !document.hidden) refreshState(); },4000);
 
   bootstrap();
 })();

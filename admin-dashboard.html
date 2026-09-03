@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Competition Admin | BYTEFEST 2026</title>
-  <link rel="stylesheet" href="competition.css?v=10.0.0">
+  <link rel="stylesheet" href="competition.css?v=12.0.0">
   <link rel="stylesheet" href="checkmate.css?v=2.0.0">
   <script src="config.js?v=2.0.0" defer></script>
-  <script src="admin-dashboard.js?v=10.0.0" defer></script>
+  <script src="admin-dashboard.js?v=12.0.0" defer></script>
 </head>
 <body>
 <main class="admin-shell">
@@ -21,30 +21,32 @@
       </div>
     </div>
     <div class="admin-actions">
-      <a class="btn" id="projectorLink" href="projector.html?event=Code%20Sprint" target="_blank">PROJECTOR</a>
+      <a class="btn" id="projectorLink" href="projector.html?event=Bug%20Hunt" target="_blank">PROJECTOR</a>
       <button class="btn" id="logoutButton">LOGOUT</button>
     </div>
   </header>
 
   <div class="tabs">
-    <button class="tab active" data-event="Code Sprint">CODE SPRINT</button>
-    <button class="tab" data-event="Bug Hunt">BUG HUNT</button>
+    <button class="tab active" data-event="Bug Hunt">BUG HUNT</button>
     <button class="tab" data-event="Checkmate">CHECKMATE</button>
   </div>
 
   <section class="card admin-toolbar">
     <div>
-      <strong id="eventTitle">Code Sprint</strong>
+      <strong id="eventTitle">Bug Hunt</strong>
       <div class="status" id="adminStatus">Loading approved registrations...</div>
     </div>
     <div class="admin-actions">
       <span class="pill" id="eventPhase">NOT STARTED</span>
-      <button class="btn good" id="eventControlButton" data-action="start">START CODE SPRINT</button>
+      <button class="btn good" id="eventControlButton" data-action="start">START BUG HUNT</button>
       <button class="btn danger" id="resetBugHuntButton" hidden>RESET BUG HUNT</button>
       <button class="btn primary" id="exportExcelButton">EXPORT EXCEL REPORT</button>
       <button class="btn" id="refreshButton">REFRESH</button>
     </div>
   </section>
+
+  <section class="admin-summary" id="adminSummary" aria-live="polite"></section>
+  <p class="admin-rank-note" id="adminRankNote">LIVE RANK is a score-based preview. OFFICIAL RANK is locked automatically. If automatic ranking/result fails or needs a coordinator correction, use SET QUAL RANK or SET FINAL; manual values are protected from later automatic ranking.</p>
 
   <section id="standardAdminSection">
     <div class="table-wrap">
@@ -52,9 +54,9 @@
         <thead>
           <tr>
             <th>Registration ID</th><th>Team</th><th>Password</th><th>Members</th>
-            <th>Status</th><th>Stage</th><th>R1</th><th>R2</th>
+            <th>Progress / Level</th><th>Stage</th><th>R1</th><th>R2</th>
             <th id="r3Head">R3</th><th id="surpriseHead">Surprise</th>
-            <th>Total</th><th>Hints</th><th>Rank</th><th>Security</th><th>Actions</th>
+            <th>Total / Qualification</th><th>Final</th><th>Hints / Wrong</th><th>Live Rank</th><th>Official Rank</th><th>Security</th><th>Actions</th>
           </tr>
         </thead>
         <tbody id="teamRows"></tbody>
@@ -100,7 +102,7 @@
           <tr>
             <th>Rank</th><th>Registration ID</th><th>Player</th><th>Password</th>
             <th>Tournament Pts</th><th>W / D / L</th><th>Capture Pts</th>
-            <th>Material +/-</th><th>Current Material</th><th>Moves</th><th>Current Match</th>
+            <th>Material +/-</th><th>Current Material</th><th>Moves</th><th>Current Match</th><th>Rank Control</th>
           </tr>
         </thead>
         <tbody id="checkmatePlayerRows"></tbody>

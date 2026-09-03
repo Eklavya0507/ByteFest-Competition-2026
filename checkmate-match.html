@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Checkmate Match | BYTEFEST 2026</title>
-  <link rel="stylesheet" href="competition.css?v=9.0.0">
+  <link rel="stylesheet" href="competition.css?v=12.0.0">
   <link rel="stylesheet" href="checkmate.css?v=3.3.0">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js" defer></script>
   <script src="config.js?v=2.0.0" defer></script>
-  <script src="checkmate-match.js?v=3.3.0" defer></script>
+  <script src="checkmate-match.js?v=12.0.0" defer></script>
 </head>
 <body>
 <div class="secure-gate active" id="checkmateSecureGate">
@@ -30,8 +30,9 @@
     <p class="lead">Fullscreen/security violation detected. Call the coordinator to continue this match.</p>
     <p>Attempt <strong id="checkmateLockCount">0/4</strong></p>
     <p id="checkmateLockReason"></p>
-    <form id="checkmateUnlockForm">
-      <input class="input" id="checkmateUnlockPassword" type="password" autocomplete="off" placeholder="Coordinator password" required>
+    <form id="checkmateUnlockForm" autocomplete="off">
+      <input class="input coordinator-key-input" id="checkmateCoordinatorAccessKey" name="coordinator_access_key" type="text" autocomplete="off" data-lpignore="true" data-1p-ignore="true" spellcheck="false" autocapitalize="off" placeholder="Coordinator access key">
+      <div class="coordinator-session-note" id="checkmateCoordinatorSessionNote"></div>
       <button class="btn primary" type="submit">COORDINATOR UNLOCK</button>
       <div class="status" id="checkmateUnlockStatus"></div>
     </form>
