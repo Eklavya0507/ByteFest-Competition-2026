@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Competition Admin | BYTEFEST 2026</title>
-  <link rel="stylesheet" href="competition.css?v=12.0.0">
+  <link rel="stylesheet" href="competition.css?v=15.0.0">
   <link rel="stylesheet" href="checkmate.css?v=2.0.0">
   <script src="config.js?v=2.0.0" defer></script>
-  <script src="admin-dashboard.js?v=12.0.0" defer></script>
+  <script src="admin-dashboard.js?v=15.0.0" defer></script>
 </head>
 <body>
 <main class="admin-shell">
@@ -22,6 +22,7 @@
     </div>
     <div class="admin-actions">
       <a class="btn" id="projectorLink" href="projector.html?event=Bug%20Hunt" target="_blank">PROJECTOR</a>
+      <a class="btn primary" id="credentialsLink" href="admin-participants-print.html?event=Bug%20Hunt" target="_blank">PRINT PARTICIPANT DETAILS</a>
       <button class="btn" id="logoutButton">LOGOUT</button>
     </div>
   </header>
@@ -46,6 +47,13 @@
   </section>
 
   <section class="admin-summary" id="adminSummary" aria-live="polite"></section>
+  <section class="security-console" id="securityConsole">
+    <div class="security-console-head">
+      <div><div class="kicker">LIVE SECURITY ALERTS</div><strong>Bug Hunt Anti-Cheat Monitor</strong></div>
+      <div class="admin-actions"><button class="btn no-print" id="testSecuritySound" type="button">TEST ALERT SOUND</button><span class="pill" id="securityAlertStatus">LISTENING</span></div>
+    </div>
+    <div class="security-console-list" id="securityAlertList"><div class="status">No security alerts yet.</div></div>
+  </section>
   <p class="admin-rank-note" id="adminRankNote">LIVE RANK is a score-based preview. OFFICIAL RANK is locked automatically. If automatic ranking/result fails or needs a coordinator correction, use SET QUAL RANK or SET FINAL; manual values are protected from later automatic ranking.</p>
 
   <section id="standardAdminSection">

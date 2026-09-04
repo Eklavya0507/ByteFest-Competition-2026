@@ -110,6 +110,7 @@
         <span>${esc(phaseLabel(item.key))} ${item.completed ? "✓" : item.started ? "•" : ""}</span>
         <b>${item.completedStages}/${item.totalStages} · ${item.score} pts</b>
       </div>
+      ${(item.stages || []).map(stage => `<div class="progress-audit-row"><span>↳ ${esc(stage.title || `Stage ${stage.stage}`)}</span><b>${stage.completedAt ? `${stage.score} pts` : 'OPEN'} · Try ${stage.attempts || 0} · Hint ${stage.hintsUsed || 0}</b></div>`).join("")}
     `).join("")}</div>`;
   }
 
@@ -160,8 +161,8 @@
           <td>${team.disqualified
             ? '<span class="pill bad">DISQUALIFIED</span>'
             : team.locked
-              ? `<span class="pill bad">LOCKED · ${team.violations}/4</span>`
-              : `<span class="pill live">UNLOCKED · ${team.violations}/4</span>`
+              ? `<span class="pill bad">LOCKED · ${team.violations}/4</span>${team.lockReason ? `<br><small>${esc(team.lockReason)}</small>` : ""}`
+              : `<span class="pill live">UNLOCKED · ${team.violations}/4</span>${team.lastSecurityEvent ? `<br><small>${esc(team.lastSecurityEvent.reason)}</small>` : ""}`
           }</td>
           <td>
             <div class="admin-actions">
@@ -360,6 +361,7 @@
       document.getElementById("eventTitle").textContent = eventName;
       document.getElementById("projectorLink").href =
         eventName === "Checkmate" ? "admin-dashboard.html" : `projector.html?event=${encodeURIComponent(eventName)}`;
+      document.getElementById("credentialsLink").href = `admin-participants-print.html?event=${encodeURIComponent(eventName)}`;
       load();
     });
   });
@@ -547,6 +549,52 @@
     if (!document.hidden) load();
   });
 
+
+  let knownSecurityAlerts = new Set();
+  let securityPrimed = false;
+  function adminAlertSound() {
+    try {
+      const C = window.AudioContext || window.webkitAudioContext;
+      const ctx = new C();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = 1040;
+      gain.gain.value = 0.16;
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.28);
+    } catch {}
+  }
+  function formatAlertTime(value) {
+    if (!value) return "--:--:--";
+    try { return new Date(value).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }); }
+    catch { return "--:--:--"; }
+  }
+  async function loadSecurityAlerts() {
+    try {
+      const alerts = await req('/api/competition/admin/security-alerts');
+      const list = document.getElementById('securityAlertList');
+      const statusEl = document.getElementById('securityAlertStatus');
+      const fresh = alerts.filter(a => !knownSecurityAlerts.has(a.id));
+      if (securityPrimed && fresh.length) adminAlertSound();
+      alerts.forEach(a => knownSecurityAlerts.add(a.id));
+      securityPrimed = true;
+      statusEl.textContent = alerts.length ? `${alerts.length} RECENT` : 'LISTENING';
+      list.innerHTML = alerts.length ? alerts.slice(0,25).map(a => `
+        <div class="security-alert-row ${fresh.some(f=>f.id===a.id)?'new':''}">
+          <b>${esc(formatAlertTime(a.at))}</b>
+          <span><b>${esc(a.registrationId)}</b><br><small>${esc(a.teamName || '')}</small></span>
+          <span>${esc((a.members || []).join(', '))}</span>
+          <span class="reason">${esc(a.reason)}${a.detail ? `<br><small>${esc(a.detail)}</small>` : ''}</span>
+          <span>${a.disqualified ? 'DQ' : a.locked ? 'LOCKED' : `V${a.violations || 0}`}</span>
+        </div>`).join('') : '<div class="status">No security alerts yet.</div>';
+    } catch (error) {
+      const statusEl = document.getElementById('securityAlertStatus');
+      if (statusEl) statusEl.textContent = 'ALERT ERROR';
+    }
+  }
+  document.getElementById('testSecuritySound')?.addEventListener('click', adminAlertSound);
   load();
+  loadSecurityAlerts();
   setInterval(() => { if (!document.hidden) load(); }, 10000);
+  setInterval(() => { if (!document.hidden) loadSecurityAlerts(); }, 3000);
 })();

@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
   <title>Participant Login | BYTEFEST 2026</title>
-  <link rel="stylesheet" href="competition.css?v=12.0.0">
+  <link rel="stylesheet" href="competition.css?v=15.0.0">
   <link rel="stylesheet" href="checkmate.css?v=3.0.0">
   <script src="config.js?v=2.0.0" defer></script>
-  <script src="participant-login.js?v=12.0.0" defer></script>
+  <script src="participant-login.js?v=15.0.0" defer></script>
 </head>
 <body>
 <main class="login-wrap">
@@ -38,7 +38,7 @@
         </div>
         <div class="field">
           <label for="password">Competition Password</label>
-          <input class="input" id="password" type="password" autocomplete="off" placeholder="Enter competition password" required>
+          <input class="input participant-secret-input" id="password" type="text" autocomplete="off" data-lpignore="true" data-1p-ignore="true" spellcheck="false" autocapitalize="off" placeholder="Enter competition password" required>
         </div>
       </section>
 
@@ -50,7 +50,7 @@
         </div>
         <div class="field">
           <label for="password2">Competition Password</label>
-          <input class="input" id="password2" type="password" autocomplete="off" placeholder="Enter Player 2 password">
+          <input class="input participant-secret-input" id="password2" type="text" autocomplete="off" data-lpignore="true" data-1p-ignore="true" spellcheck="false" autocapitalize="off" placeholder="Enter Player 2 password">
         </div>
       </section>
 

@@ -1,7 +1,15 @@
-# BYTEFEST 2026 Competition Frontend v12
+# BYTEFEST 2026 Competition Frontend v15
 
-Active competition modules: Bug Hunt and Checkmate.
+Final competition frontend for **Bug Hunt + Checkmate**.
 
-Bug Hunt supports independent team progression, qualification waiting, live/admin ranking, manual rank/final-place fallback, secure competition mode and coordinator-session unlock.
-
-Checkmate supports two-player login on one station, live clocks, material/move tracking, admin match controls and ranking.
+## v15 highlights
+- Professional Bug Hunt patch-editor interface.
+- C/Python Bug Hunt question bank support through backend question payloads.
+- RUN CODE sample execution + SUBMIT PATCH hidden-test flow.
+- No MCQ answer guessing and no direct answer-reveal flow.
+- Wrong submission and hint penalties handled by backend.
+- Copy/paste/cut/right-click/drag-drop and common DevTools shortcuts blocked in Bug Hunt secure mode.
+- Smarter tab/app-switch detection to reduce false locks from browser popups.
+- Competition admin live security alert console with sound.
+- Dedicated printable participant credential page for Bug Hunt and Checkmate.
+- Participant password fields are visually masked without normal password input semantics to reduce browser save-password prompts.

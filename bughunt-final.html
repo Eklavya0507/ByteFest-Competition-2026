@@ -4,11 +4,11 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Final | BYTEFEST 2026</title>
-<link rel="stylesheet" href="competition.css?v=12.0.0">
-<link rel="stylesheet" href="question-ui.css?v=9.0.0">
+<link rel="stylesheet" href="competition.css?v=15.0.0">
+<link rel="stylesheet" href="question-ui.css?v=15.0.0">
 <script src="config.js?v=2.0.0" defer></script>
-<script src="question-ui.js?v=9.0.0" defer></script>
-<script src="bughunt-app.js?v=12.0.0" defer></script>
+<script src="question-ui.js?v=15.0.0" defer></script>
+<script src="bughunt-app.js?v=15.0.0" defer></script>
 </head>
 <body data-round="final">
 <main class="bh-shell">
@@ -33,10 +33,20 @@
       <h2 id="stageTitle">Loading challenge...</h2>
       <p id="questionPrompt">Enter secure mode to load the challenge.</p>
     </div>
-    <form class="answer-form" id="answerForm">
-      <input class="input" id="answerInput" autocomplete="off" placeholder="Enter answer">
-      <button class="btn primary" id="submitAnswerButton" style="margin-top:12px" type="submit">SUBMIT ANSWER</button>
+    <form class="answer-form patch-form" id="answerForm">
+      <textarea class="input patch-editor" id="patchEditor" rows="12" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Editable code patch"></textarea>
+      <div class="patch-actions">
+        <button class="btn" id="resetPatchButton" type="button">RESET</button>
+        <button class="btn" id="runCodeButton" type="button">RUN CODE</button>
+        <button class="btn primary" id="submitAnswerButton" type="submit">SUBMIT PATCH</button>
+      </div>
     </form>
+    <section class="run-panel" id="runPanel" hidden>
+      <div class="run-panel-head">RUN RESULT <small>sample execution only</small></div>
+      <pre id="runOutput"></pre>
+      <div class="run-note" id="runNote"></div>
+    </section>
+    <section class="hidden-tests" id="hiddenTests" hidden></section>
     <div class="status" id="answerStatus"></div>
   </article>
   <aside class="card bh-side">
@@ -52,7 +62,7 @@
   <section class="card secure-box">
     <div class="kicker">SECURE PARTICIPANT MODE</div>
     <h2>Enter Fullscreen</h2>
-    <p class="lead">Tab switching, app switching, focus loss or leaving fullscreen triggers a security lock.</p>
+    <p class="lead">Copy/paste, DevTools shortcuts, confirmed app/tab switching or leaving fullscreen triggers a security warning and lock. Normal browser popups are ignored.</p>
     <button class="btn primary" id="enterSecureButton">ENTER SECURE MODE</button>
     <div class="status bad" id="secureStatus"></div>
   </section>

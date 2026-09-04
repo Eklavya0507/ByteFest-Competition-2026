@@ -123,3 +123,42 @@ code{color:var(--accent)}
 .coordinator-key-input{-webkit-text-security:disc;text-security:disc}
 .coordinator-session-note{min-height:18px;margin-top:8px;font-size:12px;color:#9fb4c8}
 .coordinator-session-note.good{color:#43e6a0}
+
+.answer-input{resize:vertical;min-height:78px!important;line-height:1.45;font-family:inherit}
+
+/* v15 professional Bug Hunt patch workspace */
+.patch-form{margin-top:12px}
+.patch-editor{min-height:265px!important;resize:vertical!important;background:#050b14!important;border-color:rgba(89,220,255,.22)!important;color:#edf7ff!important;font:15px/1.55 ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace!important;tab-size:4;white-space:pre;overflow:auto}
+.patch-editor:focus{border-color:rgba(89,220,255,.72)!important;box-shadow:0 0 0 3px rgba(89,220,255,.08)!important}
+.patch-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:10px}
+.run-panel,.hidden-tests{margin-top:12px;border:1px solid var(--line);border-radius:14px;background:#070e19;padding:12px 14px}
+.run-panel-head,.hidden-title{display:flex;justify-content:space-between;gap:10px;color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+.run-panel-head small{color:var(--muted);font-size:9px}
+.run-panel pre{margin:10px 0 4px;white-space:pre-wrap;color:#eef7ff;font:14px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+.run-note,.hidden-tests>small{display:block;color:var(--muted);font-size:11px;margin-top:7px}
+.hidden-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:7px;margin-top:10px}
+.hidden-case{padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0a1220;font-size:12px;font-weight:900}
+.hidden-case.pass{border-color:rgba(110,231,161,.35);color:var(--good)}
+.hidden-case.fail{border-color:rgba(251,113,133,.35);color:#fecdd3}
+.accepted-badge{display:inline-flex;margin-top:10px;padding:7px 11px;border-radius:999px;background:rgba(110,231,161,.09);border:1px solid rgba(110,231,161,.35);color:var(--good);font-size:11px;font-weight:900}
+.question-box>p{max-width:1050px}
+.question-box .qv-root+*{margin-top:10px}
+@media(max-width:950px){.patch-editor{min-height:230px!important}.patch-actions .btn{flex:1 1 120px}}
+
+/* Admin v15 security console */
+.security-console{margin:0 0 14px;padding:14px 16px;border:1px solid rgba(251,113,133,.18);border-radius:16px;background:linear-gradient(180deg,rgba(31,13,22,.72),rgba(10,15,25,.96))}
+.security-console-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.security-console-list{display:grid;gap:7px;max-height:240px;overflow:auto}
+.security-alert-row{display:grid;grid-template-columns:90px 135px minmax(140px,1fr) minmax(190px,1.4fr) 80px;gap:9px;align-items:center;padding:9px 10px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(255,255,255,.025);font-size:11px}
+.security-alert-row.new{border-color:rgba(251,113,133,.5);box-shadow:0 0 0 2px rgba(251,113,133,.07)}
+.security-alert-row .reason{color:#fecdd3;font-weight:900}.security-alert-row small{color:var(--muted)}
+@media(max-width:900px){.security-alert-row{grid-template-columns:1fr 1fr}.security-alert-row .reason{grid-column:1/-1}}
+
+/* Printable credentials page */
+.credentials-shell{width:min(1200px,100%);margin:0 auto;padding:24px}
+.credentials-head{display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.credentials-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.credential-card{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:16px;break-inside:avoid}
+.credential-card h3{margin:3px 0 7px}.credential-row{display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--line);padding:7px 0;font-size:12px}.credential-row b{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+@media print{body{background:#fff!important;color:#000!important}.no-print{display:none!important}.credentials-shell{width:100%;padding:0}.credentials-grid{grid-template-columns:repeat(2,1fr);gap:8mm}.credential-card{background:#fff;border:1px solid #999;color:#000;box-shadow:none}.credential-row{border-color:#ccc}.credential-card small,.credential-row span{color:#333!important}.portal-brand small{color:#333!important}}
+.participant-secret-input{-webkit-text-security:disc;text-security:disc}
